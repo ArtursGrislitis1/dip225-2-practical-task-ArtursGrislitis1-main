@@ -1,0 +1,84 @@
+name: Autograding Tests
+'on':
+- workflow_dispatch
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: setup
+      id: setup
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: setup
+        setup-command: ''
+        command: pip install -r setup.txt
+        input: ''
+        expected-output: ''
+        comparison-method: contains
+        timeout: 1
+    - name: Test 1
+      id: test-1
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Test 1
+        setup-command: ''
+        command: python result.py
+        input: ABCD
+        expected-output: '0'
+        comparison-method: exact
+        timeout: 1
+        max-score: 25
+    - name: Test 2
+      id: test-2
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Test 2
+        setup-command: ''
+        command: python result.py
+        input: Franklin Local Board Area
+        expected-output: '593655'
+        comparison-method: exact
+        timeout: 1
+        max-score: 25
+    - name: Test 3
+      id: test-3
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Test 3
+        setup-command: ''
+        command: python result.py
+        input: Auckland
+        expected-output: '0'
+        comparison-method: exact
+        timeout: 1
+        max-score: 25
+    - name: Test 4
+      id: test-4
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Test 4
+        setup-command: ''
+        command: python result.py
+        input: Dargaville
+        expected-output: '31290'
+        comparison-method: exact
+        timeout: 1
+        max-score: 25
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        SETUP_RESULTS: "${{steps.setup.outputs.result}}"
+        TEST-1_RESULTS: "${{steps.test-1.outputs.result}}"
+        TEST-2_RESULTS: "${{steps.test-2.outputs.result}}"
+        TEST-3_RESULTS: "${{steps.test-3.outputs.result}}"
+        TEST-4_RESULTS: "${{steps.test-4.outputs.result}}"
+      with:
+        runners: setup,test-1,test-2,test-3,test-4
