@@ -1,7 +1,5 @@
 name: Autograding Tests
-'on':
-- workflow_dispatch
-- repository_dispatch
+on: [push, workflow_dispatch, repository_dispatch]
 permissions:
   checks: write
   actions: read
@@ -19,10 +17,10 @@ jobs:
       with:
         test-name: setup
         setup-command: ''
-        command: pip install -r setup.txt
+        command: pip install -q -r setup.txt && echo 1
         input: ''
-        expected-output: ''
-        comparison-method: contains
+        expected-output: '1'
+        comparison-method: exact
         timeout: 1
     - name: Test 1
       id: test-1
